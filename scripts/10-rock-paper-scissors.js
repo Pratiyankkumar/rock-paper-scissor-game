@@ -14,6 +14,112 @@ updateScoreElement();
 //   }
 // }
 
+let isAutoPlaying = false;
+let intervalId;
+
+function autoPlay() {
+
+  if (!isAutoPlaying) {
+    intervalId = setInterval( () => {
+      const playerMove = pickComputerMove();
+      playGame(playerMove);
+    }, 1000);
+    isAutoPlaying = true;
+  } else {
+    clearInterval(intervalId);
+    isAutoPlaying = false;
+  }
+}
+
+let autoPlayButtonElement = document.querySelector('.js-autoplay-button');
+autoPlayButtonElement.addEventListener('click', () => {
+  autoPlay();
+})
+
+autoPlayButtonElement.addEventListener('click', () => {
+  if (autoPlayButtonElement.innerHTML === 'Auto Play' ) {
+    autoPlayButtonElement.innerHTML = 'Stop Playing'
+  } else {
+    autoPlayButtonElement.innerHTML = 'Auto Play'
+  }
+})
+
+
+document.querySelector('.js-rock-button')
+  .addEventListener('click', () => {
+    playGame('rock')
+  });
+
+document.querySelector('.js-paper-button')
+  .addEventListener('click', () => {
+    playGame('paper')
+  })
+
+document.querySelector('.js-scissor-button')
+  .addEventListener('click', () => {
+    playGame('scissor')
+  })
+
+  document.body.addEventListener('keydown', (event) => {
+    if (event.key==='r') {
+      playGame('rock')
+    } else if (event.key==='p') {
+      playGame('paper')
+    } else if (event.key==='s') {
+      playGame('scissor')
+    } else if (event.key === 'Backspace') {
+      score.wins = 0;
+      score.losses = 0;
+      score.Ties = 0;
+      localStorage.removeItem('score');
+      updateScoreElement()
+    } else if (event.key === 'a') {
+      autoPlay();
+    }
+  });
+
+let resetButtonElement =  document.querySelector('.js-reset-button');
+resetButtonElement.addEventListener('click', () => {
+
+  document.querySelector('.js-popup')
+  .classList.add('css-popup')
+  document.querySelector('.js-overlay')
+    .classList.add('overlay')
+  document.querySelector('.js-overlay')
+    .innerHTML = `<p class="para">Are you sure want to reset the score?</p>
+    <button class="yes-button js-yes-button">Yes</button>
+    <button class="no-button js-no-button">No</button>`
+
+    let yesButtonElement = document.querySelector('.js-yes-button')
+    yesButtonElement.addEventListener('click', () => {
+      score.wins = 0;
+      score.losses = 0;
+      score.Ties = 0;
+      localStorage.removeItem('score');
+      updateScoreElement()
+      document.querySelector('.js-popup')
+        .classList.remove('css-popup')
+        document.querySelector('.js-overlay')
+        .classList.remove('overlay')
+        document.querySelector('.js-overlay')
+        .innerHTML = ''
+    })
+
+    let noButtonElement = document.querySelector('.js-no-button');
+    noButtonElement.addEventListener('click', () => {
+      localStorage.removeItem('score');
+      updateScoreElement()
+      document.querySelector('.js-popup')
+        .classList.remove('css-popup')
+        document.querySelector('.js-overlay')
+        .classList.remove('overlay')
+        document.querySelector('.js-overlay')
+        .innerHTML = ''
+    })
+    
+});
+
+
 function playGame(playerMove) {
   const computerMove=pickComputerMove();    
   let result = '';
